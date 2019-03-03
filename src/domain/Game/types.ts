@@ -19,6 +19,7 @@ export interface PlayerInfo {
 	role: Role;
 	side: Side;
 	user: {
+		id?: string;
 		firstName: string;
 		lastName: string;
 		avatar: string;

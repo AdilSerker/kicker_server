@@ -31,6 +31,7 @@ export class Lobby {
 				role,
 				side,
 				user: {
+					id: user.id,
 					firstName: user.firstName,
 					lastName: user.lastName,
 					avatar: user.avatar

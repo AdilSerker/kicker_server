@@ -10,6 +10,10 @@ function createInput(name) {
     return input;
 }
 
+function createButton() {
+
+}
+
 function getRegistrationForm() {
     event.preventDefault();
     const loginScreen = document.getElementById('loginScreen');
@@ -29,7 +33,7 @@ function getLoginForm() {
 }
 
 function actionLobby() {
-    
+
 }
 
 async function actionLogin(event) {
@@ -42,7 +46,6 @@ async function actionLogin(event) {
     const form = document.getElementById("loginScreen");
     form.parentNode.removeChild(form);
 
-    store.userId = user.id;
 }
 
 async function actionRegistartion(event) {
@@ -65,7 +68,6 @@ async function actionRegistartion(event) {
     const form = document.getElementById("loginScreen");
     form.parentNode.removeChild(form);
 
-    store.userId = user.id;
 }
 
 function createLoginForm() {
@@ -134,7 +136,7 @@ function createRegistrationForm() {
 class Game {
     constructor() {
         this.div = document.createElement('div');
-        this.div.id = "gameScreen";
+        this.div.id = "gamefield";
 
         this.players = [];
         this.count = [];
@@ -158,8 +160,6 @@ class Game {
 
     draw() {
         ROOT.appendChild(this.div);
-        const table = document.createElement('div');
-        table.className = "table";
 
         const redAtack = document.createElement('div');
         redAtack.className = "lobby red attack";
@@ -170,13 +170,35 @@ class Game {
         const blackDefense = document.createElement('div');
         blackDefense.className = "lobby black defense";
 
-        table.appendChild(redAtack);
-        table.appendChild(redDefense);
-        table.appendChild(blackAtack);
-        table.appendChild(blackDefense);
+        this.div.appendChild(redAtack);
+        this.div.appendChild(blackAtack);
+        this.div.appendChild(redDefense);
+        this.div.appendChild(blackDefense);
 
-        this.div.appendChild(table);
+        this.div.onclick = addToLobby;
     }
+
+}
+
+async function addToLobby(event) {
+    const classes = event.target.classList;
+    const request = {
+        role: 0,
+        side: 0
+    }
+    
+    if (classes.value.indexOf('lobby') !== -1){
+        if (classes.value.indexOf('defense') !== -1){
+            request.role += 1;
+        }
+        if (classes.value.indexOf('black') !== -1){
+            request.side += 1;
+
+        }
+    }
+
+    const { data } = await axios.post('http://localhost:3000/game', request);
+    console.log(data);
 
 }
 
@@ -214,10 +236,9 @@ const game = new Game();
 const loginScreen = new LoginScreen();
 
 (async function() {
+    await game.init();
+    game.draw();
     if (!(await LoginScreen.checkAuthorize())) {
         loginScreen.draw();
     }
-    await game.init();
-    game.draw();
-    
 })();

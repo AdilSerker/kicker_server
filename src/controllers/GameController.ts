@@ -29,13 +29,19 @@ export class GameController {
 		@GetSessionFromRequest() session: Session,
 		@Body() { role, side }: { role: Role, side: Side }
 	): Promise<GameState> {
-		const game = Game.getInstance();
-
-		session.user.id
-
+		if (!session.user) {
+			throw Error('Not authorize');
+		}
 		const { password, ...user } = await userRepository.getUser(session.user.id);
 
-		game.addPlayer({ role, side, user });
+		const game = Game.getInstance();
+
+		if(!game.getState().players.find(item => {
+			return item.user.id === user.id;
+		})) {
+			game.addPlayer({ role, side, user });
+			
+		}
 
 		return game.getState();
 	}
