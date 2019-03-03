@@ -1,42 +1,33 @@
 import { Body, Get, JsonController, OnUndefined, Post, Put } from "routing-controllers";
 
+import { generatePasswordHash, getSalt } from "../components/crypto";
+import { User } from "../domain/User/User";
 import { userRepository } from "../infrastructure/User/UserRepository";
 import { CreateUserForm } from "./validation/CreateUserForm";
-import { User } from "../domain/User/User";
-import { generatePasswordHash, getSalt } from "../components/crypto";
 import { LoginParamForm } from "./validation/LoginParamForm";
+import { UserView } from "./view/UserView";
+import { UserResponse } from "./types";
+import { GetSessionFromRequest } from "../components/decorators/GetSessionFromRequest";
+import { Session } from "../components/middlewares/Session";
 
 @JsonController("/user")
 export class UserController {
 
 	@Post("/")
 	public async createUser(
-        @Body() form: CreateUserForm
-    ): Promise<User> {
-		const { password, ...user } = form;
+		@GetSessionFromRequest() session: Session,
+		@Body() form: CreateUserForm
+	): Promise<UserResponse> {
+		const { password, ...data } = form;
 
 		const hashPassword = generatePasswordHash(password);
-		
-		return userRepository.save({ ...user, password: hashPassword });
+
+		const user = await userRepository.save({ ...data, password: hashPassword });
+
+		const { password: pswd, ...param } = user;
+
+		session.user = param;
+
+		return UserView.makeResponse(user);
 	}
-
-	@Post("/auth")
-	public async login(
-		@Body() { login, password }: LoginParamForm
-	): Promise<User> {
-		const user = await userRepository.getUserByLogin(login);
-		if (!user) {
-			throw new Error(`Now found user with ${login}`);
-		}
-		const salt = getSalt(user.password);
-		const hashPassword = generatePasswordHash(password, salt);
-
-		if (user.password !== hashPassword) {
-			throw new Error("Wrong password");
-		}
-
-		return user;
-
-	}
-
 }

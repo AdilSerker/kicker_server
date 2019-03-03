@@ -1,0 +1,9 @@
+.lobby {
+    width: 100pt;
+    height: 100pt;
+    border: 2pt solid black;
+}
+
+.table {
+    border: 2pt solid black;
+}

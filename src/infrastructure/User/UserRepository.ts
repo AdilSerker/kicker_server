@@ -1,7 +1,7 @@
-import { User } from "src/domain/User/User";
-import { getRepository, getConnection, EntityManager } from "typeorm";
-import { UserModel } from "./model/UserModel";
 import { plainToClass } from "class-transformer";
+import { User } from "src/domain/User/User";
+import { EntityManager, getConnection, getRepository } from "typeorm";
+import { UserModel } from "./model/UserModel";
 
 class UserRepository {
 	public async getUser(id: string): Promise<User> {
@@ -13,7 +13,6 @@ class UserRepository {
 	}
 
 	public async save(user: User): Promise<User> {
-
 		return getRepository(UserModel).save(plainToClass(UserModel, user));
 	}
 

@@ -24,7 +24,7 @@ export class Lobby {
 	}
 
 	public getPlayersInfo(): PlayerInfo[] {
-		return this.players.map(item => {
+		return this.players.map((item) => {
 			const { role, side, user } = item;
 
 			return {
@@ -35,8 +35,8 @@ export class Lobby {
 					lastName: user.lastName,
 					avatar: user.avatar
 				}
-			}
-		})
+			};
+		});
 	}
 
 }

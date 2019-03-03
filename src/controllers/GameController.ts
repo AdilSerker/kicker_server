@@ -2,6 +2,8 @@ import { Body, Get, JsonController, OnUndefined, Post, Put } from "routing-contr
 
 import { Game, GameState, Role, Side } from "../domain/Game";
 import { userRepository } from "../infrastructure/User/UserRepository";
+import { GetSessionFromRequest } from "../components/decorators/GetSessionFromRequest";
+import { Session } from "../components/middlewares/Session";
 
 @JsonController("/game")
 export class GameController {
@@ -24,11 +26,14 @@ export class GameController {
 
 	@Post("/")
 	public async addPlayer(
-		@Body() { role, side, id }: { role: Role, side: Side, id: string }
+		@GetSessionFromRequest() session: Session,
+		@Body() { role, side }: { role: Role, side: Side }
 	): Promise<GameState> {
 		const game = Game.getInstance();
 
-		const { password, ...user } = await userRepository.getUser(id);
+		session.user.id
+
+		const { password, ...user } = await userRepository.getUser(session.user.id);
 
 		game.addPlayer({ role, side, user });
 

@@ -1,24 +1,24 @@
-import { Entity, PrimaryColumn, Column } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 import { User } from "../../../domain/User/User";
 
-@Entity('user')
+@Entity("user")
 export class UserModel implements User {
 
-    @PrimaryColumn()
-    public id: string;
+	@PrimaryColumn()
+	public id: string;
 
-    @Column()
-    public login: string;
+	@Column()
+	public login: string;
 
-    @Column()
-    public password: string;
+	@Column()
+	public password: string;
 
-    @Column()
-    public firstName: string;
+	@Column()
+	public firstName: string;
 
-    @Column()
-    public lastName: string;
+	@Column()
+	public lastName: string;
 
-    @Column()
-    public avatar?: string;
+	@Column()
+	public avatar: string;
 }
